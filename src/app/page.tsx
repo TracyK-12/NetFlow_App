@@ -79,7 +79,7 @@ export default function DashboardPage() {
         
         <div className="flex justify-between items-center">
           <div>
-            <h1 className="text-3xl md:text-4xl font-black text-[#1E293B] tracking-tight">Vue d&apos;ensemble</h1>
+            <h1 className="text-3xl md:text-4xl font-black text-[#1E293B] tracking-tight">Dashboard</h1>
             <p className="text-slate-500 font-medium mt-1">Vos finances en temps réel.</p>
           </div>
           <div className="hidden sm:flex bg-blue-50 text-blue-600 px-4 py-2 rounded-2xl items-center gap-2 font-bold text-sm">
