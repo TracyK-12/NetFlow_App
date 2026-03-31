@@ -151,8 +151,12 @@ export default function MissionsPage() {
                   </div>
                 )}
                 {currentMonthMissions.map((mission) => (
-                  <div key={mission.id} className="bg-white rounded-2xl border border-slate-100 shadow-sm p-4">
-                    <div className="flex items-center justify-between gap-4">
+                  <div key={mission.id} className="bg-white rounded-2xl border border-slate-100 shadow-sm overflow-hidden">
+                    {/* En-tête de la mission cliquable */}
+                    <div 
+                      onClick={() => setExpandedMission(expandedMission === mission.id ? null : mission.id)}
+                      className="p-4 flex items-center justify-between gap-4 cursor-pointer hover:bg-slate-50 transition-colors"
+                    >
                       <div className="flex items-center gap-3 overflow-hidden">
                         <div className={`w-10 h-10 rounded-xl flex items-center justify-center shrink-0 ${mission.status === 'perçu' ? 'bg-green-100 text-green-600' : 'bg-blue-50 text-blue-600'}`}>
                           {mission.status === 'perçu' ? <CheckCircle2 size={20} /> : <Briefcase size={20} />}
@@ -170,26 +174,56 @@ export default function MissionsPage() {
                         </span>
                         {mission.status !== 'perçu' && (
                           <button 
-                            onClick={() => setShowPaidModal({id: mission.id, name: mission.name, amount: mission.netIncome})}
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              setShowPaidModal({id: mission.id, name: mission.name, amount: mission.netIncome});
+                            }}
                             className="p-2 bg-green-500 text-white rounded-lg hover:bg-green-600 transition-colors"
                           >
                             <Wallet size={16} />
                           </button>
                         )}
                         <button 
-                          onClick={() => setMissions(missions.filter(m => m.id !== mission.id))}
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            setMissions(missions.filter(m => m.id !== mission.id));
+                          }}
                           className="p-2 text-slate-300 hover:text-red-500 transition-colors"
                         >
                           <Trash2 size={16} />
                         </button>
                       </div>
                     </div>
+
+                    {/* DÉTAILS DES CALCULS (S'affiche au clic) */}
+                    {expandedMission === mission.id && (
+                      <div className="px-4 pb-4 pt-2 bg-slate-50 border-t border-slate-100 animate-in slide-in-from-top-2 duration-200">
+                        <div className="grid grid-cols-2 md:grid-cols-4 gap-4 py-3">
+                          <div className="space-y-1">
+                            <p className="text-[9px] uppercase font-bold text-slate-400">Temps total</p>
+                            <p className="text-xs font-bold text-slate-700">{mission.totalHours}h à {mission.grossRate}€/h</p>
+                          </div>
+                          <div className="space-y-1">
+                            <p className="text-[9px] uppercase font-bold text-slate-400">Total Brut</p>
+                            <p className="text-xs font-bold text-slate-700">{(mission.totalHours * mission.grossRate).toFixed(2)}€</p>
+                          </div>
+                          <div className="space-y-1">
+                            <p className="text-[9px] uppercase font-bold text-slate-400">Cotisations (23%)</p>
+                            <p className="text-xs font-bold text-red-500">-{(mission.totalHours * mission.grossRate * 0.23).toFixed(2)}€</p>
+                          </div>
+                          <div className="space-y-1 text-right md:text-left">
+                            <p className="text-[9px] uppercase font-bold text-slate-400">Net Estimé</p>
+                            <p className="text-xs font-black text-blue-600">{mission.netIncome}€</p>
+                          </div>
+                        </div>
+                      </div>
+                    )}
                   </div>
                 ))}
               </div>
             </section>
 
-            {/* HISTORIQUE DES SORTIES (Tableau défilable) */}
+            {/* HISTORIQUE DES SORTIES */}
             <section className="bg-white rounded-[2rem] border border-slate-100 shadow-sm overflow-hidden">
               <div className="p-6 border-b border-slate-50 flex items-center gap-3">
                 <History className="text-red-500" />
@@ -218,7 +252,7 @@ export default function MissionsPage() {
             </section>
           </div>
 
-          {/* COLONNE ACTIONS (SIDEBAR DROITE) */}
+          {/* COLONNE ACTIONS */}
           <aside className="space-y-6">
             <div className="bg-[#1E293B] p-6 md:p-8 rounded-[2rem] text-white shadow-2xl">
               <h3 className="text-xl font-bold mb-6 flex items-center gap-2">
